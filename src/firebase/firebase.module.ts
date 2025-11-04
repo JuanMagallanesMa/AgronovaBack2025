@@ -1,4 +1,3 @@
-// src/firebase/firebase.module.ts
 import { Module, Global } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as admin from 'firebase-admin';
@@ -26,7 +25,8 @@ export const FIRESTORE_PROVIDER = 'FIRESTORE_PROVIDER';
         }
 
         // Configuración de la credencial
-        const serviceAccount = require(`../../${serviceAccountPath}`); // (la ruta es desde /dist)
+        // (la ruta es relativa desde /dist en producción)
+        const serviceAccount = require(`../../${serviceAccountPath}`); 
 
         // Inicializa la app de Firebase
         return admin.initializeApp({
@@ -39,7 +39,14 @@ export const FIRESTORE_PROVIDER = 'FIRESTORE_PROVIDER';
       provide: FIRESTORE_PROVIDER, // Este es el 'nombre' que usaremos para inyectarlo
       inject: ['FIREBASE_APP'], // Depende de que la app esté inicializada
       useFactory: (app: admin.app.App) => {
-        return app.firestore(); // <-- Devuelve la instancia de Firestore
+        const firestore = app.firestore(); // <-- Obtiene la instancia
+
+        // --- INICIO DE LA SOLUCIÓN ---
+        // Esta línea le dice a Firestore que ignore campos 'undefined'
+        firestore.settings({ ignoreUndefinedProperties: true });
+        // --- FIN DE LA SOLUCIÓN ---
+
+        return firestore; // <-- Devuelve la instancia configurada
       },
     },
   ],
