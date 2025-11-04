@@ -32,6 +32,10 @@ export class CreateAgricultorDto {
   @IsNotEmpty()
   @IsString()
   experiencia: string;
+
+  @IsOptional()
+  @IsString()
+  estado?: string;
 }
 
 // 3. Este es el DTO para el PUT (actualizar)
@@ -52,4 +56,8 @@ export class UpdateAgricultorDto {
   @IsOptional()
   @IsString()
   experiencia?: string;
+
+  @IsOptional()
+  @IsString()
+  estado?: string;
 }
