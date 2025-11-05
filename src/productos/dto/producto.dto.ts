@@ -5,8 +5,9 @@ import { IBaseModel } from 'src/common/base.interface';
 export interface Producto extends IBaseModel {
   nombre: string;
   descripcion: string;
-  precio: number;
-  unidad: string;
+  cantidadStock: number;
+  precioCaja: number;
+  estado: string;
   idCultivo: string;
 }
 
@@ -22,36 +23,46 @@ export class CreateProductoDto {
   @IsNotEmpty()
   @IsNumber()
   @Min(0)
-  precio: number;
+  precioCaja: number;
 
   @IsNotEmpty()
-  @IsString()
-  unidad: string; // Ej. 'kg', 'saco', 'unidad'
+  @IsNumber()
+  @Min(0)
+  cantidadStock: number;
 
   @IsNotEmpty()
   @IsString()
   idCultivo: string; // Mapea a Cultivo
+
+  @IsOptional()
+  @IsString()
+  estado?: string;
 }
 
 export class UpdateProductoDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  nombre?: string;
+  nombre: string;
 
   @IsOptional()
   @IsString()
-  descripcion?: string;
+  descripcion: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsNumber()
   @Min(0)
-  precio?: number;
+  precioCaja: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  cantidadStock: number;
+
+  @IsNotEmpty()
+  @IsString()
+  idCultivo: string; // Mapea a Cultivo
 
   @IsOptional()
   @IsString()
-  unidad?: string;
-
-  @IsOptional()
-  @IsString()
-  idCultivo?: string;
+  estado?: string;
 }

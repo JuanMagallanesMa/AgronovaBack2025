@@ -16,6 +16,8 @@ export interface Tarea extends IBaseModel {
   idTipoTarea: string;
   idAgricultores: string[];
   idInsumos: string[];
+  descripcion: string;
+  estado: string;
 }
 
 export class CreateTareaDto {
@@ -48,6 +50,14 @@ export class CreateTareaDto {
   @IsString({ each: true })
   @IsOptional()
   idInsumos: string[]; // Mapea a List<String>
+
+  @IsNotEmpty()
+  @IsString()
+  descripcion: string;
+
+  @IsOptional()
+  @IsString()
+  estado: string;
 }
 
 export class UpdateTareaDto {
@@ -80,4 +90,12 @@ export class UpdateTareaDto {
   @IsString({ each: true })
   @IsOptional()
   idInsumos?: string[];
+
+  @IsNotEmpty()
+  @IsString()
+  descripcion: string;
+
+  @IsOptional()
+  @IsString()
+  estado: string;
 }

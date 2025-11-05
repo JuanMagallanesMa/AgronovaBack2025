@@ -3,16 +3,17 @@ import { IsNotEmpty, IsString, IsOptional, IsNumber, Min } from 'class-validator
 import { IBaseModel } from 'src/common/base.interface';
 
 export interface Insumo extends IBaseModel {
-  nombre: string;
-  cantidad: number;
-  unidad: string;
   idTipoInsumo: string;
+  descripcion: string;
+  cantidad: number;
+  unidadMedida: string
+  estado: string;
 }
 
 export class CreateInsumoDto {
   @IsNotEmpty()
   @IsString()
-  nombre: string;
+  descripcion: string;
 
   @IsNotEmpty()
   @IsNumber()
@@ -21,17 +22,21 @@ export class CreateInsumoDto {
 
   @IsNotEmpty()
   @IsString()
-  unidad: string; // Ej. 'kg', 'litros', 'unidades'
+  unidadMedida: string; // Ej. 'kg', 'litros', 'unidades'
 
   @IsNotEmpty()
   @IsString()
   idTipoInsumo: string; // Mapea a TipoInsumo
+
+  @IsOptional()
+  @IsString()
+  estado?: string; 
 }
 
 export class UpdateInsumoDto {
   @IsOptional()
   @IsString()
-  nombre?: string;
+  descripcion?: string;
 
   @IsOptional()
   @IsNumber()
@@ -40,9 +45,14 @@ export class UpdateInsumoDto {
 
   @IsOptional()
   @IsString()
-  unidad?: string;
+  unidadMedida?: string;
 
   @IsOptional()
   @IsString()
   idTipoInsumo?: string;
+
+  @IsOptional()
+  @IsString()
+  estado?: string; 
+
 }

@@ -5,10 +5,9 @@ import { IBaseModel } from 'src/common/base.interface';
 // Interfaz que mapea el modelo de Dart
 export interface Cultivo extends IBaseModel {
   nombre: string;
-  fechaSiembra: string;
-  fechaCosecha: string;
   idCategoria: string;
   idUbicacion: string;
+  estado: string;
 }
 
 // DTO para POST
@@ -18,20 +17,16 @@ export class CreateCultivoDto {
   nombre: string;
 
   @IsNotEmpty()
-  @IsDateString()
-  fechaSiembra: string;
-
-  @IsNotEmpty()
-  @IsDateString()
-  fechaCosecha: string;
-
-  @IsNotEmpty()
   @IsString()
   idCategoria: string; // Mapea a CategoriaCultivo
 
   @IsNotEmpty()
   @IsString()
   idUbicacion: string; // Mapea a Ubicacion
+
+  @IsNotEmpty()
+  @IsString()
+  estado: string;
 }
 
 // DTO para PUT
@@ -41,18 +36,14 @@ export class UpdateCultivoDto {
   nombre?: string;
 
   @IsOptional()
-  @IsDateString()
-  fechaSiembra?: string;
-
-  @IsOptional()
-  @IsDateString()
-  fechaCosecha?: string;
-
-  @IsOptional()
   @IsString()
   idCategoria?: string;
 
   @IsOptional()
   @IsString()
   idUbicacion?: string;
+  
+  @IsOptional()
+  @IsString()
+  estado?: string;
 }
