@@ -5,9 +5,28 @@ import {
   IsOptional,
   IsDateString,
   IsArray,
+  IsNumber, // 1. Importar validador de número
+  IsPositive, // 2. Importar validador de positivo
+  ValidateNested, // 3. Importar validador anidado
 } from 'class-validator';
+import { Type } from 'class-transformer'; // 4. Importar Type para la transformación
 import { IBaseModel } from 'src/common/base.interface';
 
+// --- NUEVO DTO ---
+// 5. Definir la estructura del insumo asignado
+export class InsumoAsignadoDto {
+  @IsNotEmpty()
+  @IsString()
+  idInsumo: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  cantidad: number;
+}
+// --- FIN NUEVO DTO ---
+
+// 6. Actualizar la interfaz (opcional pero recomendado)
 export interface Tarea extends IBaseModel {
   nombre: string;
   fechaInicio: string;
@@ -15,7 +34,8 @@ export interface Tarea extends IBaseModel {
   idCultivo: string;
   idTipoTarea: string;
   idAgricultores: string[];
-  idInsumos: string[];
+  // 7. Actualizar la interfaz para reflejar la nueva estructura
+  insumosAsignados: InsumoAsignadoDto[]; 
   descripcion: string;
   estado: string;
 }
@@ -44,12 +64,14 @@ export class CreateTareaDto {
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  idAgricultores: string[]; // Mapea a List<String>
+  idAgricultores: string[];
 
+  // 8. Reemplazar idInsumos por insumosAsignados
   @IsArray()
-  @IsString({ each: true })
+  @ValidateNested({ each: true }) // 9. Validar cada objeto del array
+  @Type(() => InsumoAsignadoDto) // 10. Indicar a class-transformer qué clase usar
   @IsOptional()
-  idInsumos: string[]; // Mapea a List<String>
+  insumosAsignados: InsumoAsignadoDto[]; // Ya no es idInsumos: string[]
 
   @IsNotEmpty()
   @IsString()
@@ -86,16 +108,22 @@ export class UpdateTareaDto {
   @IsOptional()
   idAgricultores?: string[];
 
+  // 11. Replicar el cambio en UpdateTareaDto
   @IsArray()
-  @IsString({ each: true })
+  @ValidateNested({ each: true })
+  @Type(() => InsumoAsignadoDto)
   @IsOptional()
-  idInsumos?: string[];
+  insumosAsignados?: InsumoAsignadoDto[];
 
-  @IsNotEmpty()
+  // --- CORRECCIÓN IMPORTANTE ---
+  // 12. En tu UpdateTareaDto, 'descripcion' no debería ser @IsNotEmpty()
+  // Si es @IsNotEmpty(), te obligará a enviarla siempre.
+  // Debe ser @IsOptional() como los demás.
+  @IsOptional() 
   @IsString()
-  descripcion: string;
+  descripcion?: string; // Cambiado de @IsNotEmpty() a @IsOptional()
 
   @IsOptional()
   @IsString()
-  estado: string;
+  estado?: string;
 }
