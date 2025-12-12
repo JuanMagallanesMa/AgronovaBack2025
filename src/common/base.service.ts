@@ -115,4 +115,25 @@ export class BaseService<T extends IBaseModel> {
     // Llama al nuevo método genérico con el estado 'Inactivo'
     return this.updateStatus(id, AppStatus.inactivo);
   }
+
+  /**
+   * 🔥 MÉTODO CLAVE PARA FIREBASE 🔥
+   * Busca documentos que pertenezcan a un campo específico (ej: idAgricultor)
+   * y que estén activos.
+   */
+  async findByField(fieldName: string, value: string): Promise<T[]> {
+    const activeStatuses = [
+      AppStatus.activo,
+      AppStatus.pendiente,
+      AppStatus.completada,
+    ];
+
+    // Consulta nativa de Firestore
+    const snapshot = await this.collection
+      .where(fieldName, '==', value)        // Filtro 1: El dueño (idAgricultor)
+      .where('estado', 'in', activeStatuses) // Filtro 2: Que no esté borrado
+      .get();
+
+    return snapshot.docs.map((doc) => this.mapDocument(doc));
+  }
 }

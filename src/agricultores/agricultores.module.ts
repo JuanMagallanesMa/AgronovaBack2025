@@ -8,5 +8,6 @@ import { AgricultoresController } from 'src/v1/agricultores/agricultores.control
   imports: [FirebaseModule],
   controllers: [AgricultoresController],
   providers: [AgricultoresService],
+  exports: [AgricultoresService],
 })
 export class AgricultoresModule {}

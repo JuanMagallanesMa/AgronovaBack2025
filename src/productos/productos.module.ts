@@ -8,5 +8,6 @@ import { ProductosController } from 'src/v1/productos/productos.controller';
   imports: [FirebaseModule],
   controllers: [ProductosController],
   providers: [ProductosService],
+  exports: [ProductosService],
 })
 export class ProductosModule {}

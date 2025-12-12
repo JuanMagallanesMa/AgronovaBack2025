@@ -8,5 +8,6 @@ import { TareasController } from 'src/v1/tareas/tareas.controller';
   imports: [FirebaseModule],
   controllers: [TareasController],
   providers: [TareasService],
+  exports: [TareasService],
 })
 export class TareasModule {}

@@ -8,5 +8,6 @@ import { InsumosController } from 'src/v1/insumos/insumos.controller';
   imports: [FirebaseModule],
   controllers: [InsumosController],
   providers: [InsumosService],
+  exports: [InsumosService],
 })
 export class InsumosModule {}

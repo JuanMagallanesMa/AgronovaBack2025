@@ -8,5 +8,6 @@ import { CultivosController } from 'src/v1/cultivos/cultivos.controller';
   imports: [FirebaseModule],
   controllers: [CultivosController],
   providers: [CultivosService],
+  exports: [CultivosService],
 })
 export class CultivosModule {}

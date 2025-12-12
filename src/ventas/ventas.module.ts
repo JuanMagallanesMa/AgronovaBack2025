@@ -8,5 +8,6 @@ import { VentasController } from 'src/v1/ventas/ventas.controller';
   imports: [FirebaseModule],
   controllers: [VentasController],
   providers: [VentasService],
+  exports: [VentasService],
 })
 export class VentasModule {}

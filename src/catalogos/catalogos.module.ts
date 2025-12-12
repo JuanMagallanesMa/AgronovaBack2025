@@ -17,5 +17,12 @@ import { UbicacionesService } from './services/ubicaciones/ubicaciones.service';
     TiposInsumoService,
     TiposTareaService,
   ],
+  exports: [
+    CategoriasCultivoService,
+    UbicacionesService,
+    TiposInsumoService,
+    TiposTareaService,
+  ],
+  
 })
 export class CatalogosModule {}

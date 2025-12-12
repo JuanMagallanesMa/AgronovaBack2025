@@ -11,6 +11,7 @@ import { InsumosModule } from './insumos/insumos.module';
 import { ProductosModule } from './productos/productos.module';
 import { TareasModule } from './tareas/tareas.module';
 import { VentasModule } from './ventas/ventas.module';
+import { IaModule } from './ia/ia.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { VentasModule } from './ventas/ventas.module';
     ProductosModule,
     TareasModule,
     VentasModule,
+    IaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
