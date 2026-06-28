@@ -9,11 +9,13 @@ import {
   Put,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateTareaDto, UpdateTareaDto } from 'src/tareas/dto/tarea.dto';
 import { TareasService } from 'src/tareas/tareas.service';
 
-
+@UseGuards(JwtAuthGuard)
 @Controller('v1/tareas')
 export class TareasController {
   constructor(private readonly tareasService: TareasService) {}
