@@ -9,7 +9,9 @@ import {
   Put,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 import { CreateCatalogoDto, UpdateCatalogoDto } from 'src/catalogos/dto/catalogo.dto';
 import { CategoriasCultivoService } from 'src/catalogos/services/categorias-cultivo/categorias-cultivo.service';
@@ -17,6 +19,7 @@ import { TiposInsumoService } from 'src/catalogos/services/tipos-insumo/tipos-in
 import { TiposTareaService } from 'src/catalogos/services/tipos-tarea/tipos-tarea.service';
 import { UbicacionesService } from 'src/catalogos/services/ubicaciones/ubicaciones.service';
 
+@UseGuards(JwtAuthGuard)
 @Controller('v1/catalogos')
 export class CatalogosController {
   constructor(
