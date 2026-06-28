@@ -8,5 +8,8 @@ export interface IUser {
   contrasenaHash: string;
   rol: string;
   estado: string;
-  ultimoAcceso?: Timestamp;
+  ultimoAcceso?: Timestamp | null;
+  resetPasswordTokenHash?: string | null;
+  resetPasswordExpiresAt?: Timestamp | null;
+  resetPasswordRequestedAt?: Timestamp | null;
 }
