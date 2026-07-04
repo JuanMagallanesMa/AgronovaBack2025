@@ -9,10 +9,7 @@ import { AgricultoresModule } from './agricultores/agricultores.module';
 import { CatalogosModule } from './catalogos/catalogos.module';
 import { CultivosModule } from './cultivos/cultivos.module';
 import { InsumosModule } from './insumos/insumos.module';
-import { ProductosModule } from './productos/productos.module';
 import { TareasModule } from './tareas/tareas.module';
-import { VentasModule } from './ventas/ventas.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,15 +17,12 @@ import { VentasModule } from './ventas/ventas.module';
     }),
     AuthModule,
     FirebaseModule,
-    
-    // --- Tus Módulos de API ---
+    // --- Tus Modulos de API ---
     AgricultoresModule,
     CatalogosModule,
     CultivosModule,
     InsumosModule,
-    ProductosModule,
     TareasModule,
-    VentasModule,
   ],
   controllers: [AppController],
   providers: [AppService],
