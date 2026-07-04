@@ -1,11 +1,12 @@
 // src/tareas/tareas.module.ts
 import { Module } from '@nestjs/common';
-import { TareasService } from './tareas.service';
+import { CatalogosModule } from 'src/catalogos/catalogos.module';
 import { FirebaseModule } from 'src/firebase/firebase.module';
 import { TareasController } from 'src/v1/tareas/tareas.controller';
+import { TareasService } from './tareas.service';
 
 @Module({
-  imports: [FirebaseModule],
+  imports: [FirebaseModule, CatalogosModule],
   controllers: [TareasController],
   providers: [TareasService],
 })
