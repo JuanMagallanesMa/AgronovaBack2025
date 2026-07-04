@@ -9,11 +9,13 @@ import {
   Put,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateInsumoDto, UpdateInsumoDto } from 'src/insumos/dto/insumo.dto';
 import { InsumosService } from 'src/insumos/insumos.service';
 
-
+@UseGuards(JwtAuthGuard)
 @Controller('v1/insumos')
 export class InsumosController {
   constructor(private readonly insumosService: InsumosService) {}

@@ -9,11 +9,13 @@ import {
   Put,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateVentaDto, UpdateVentaDto } from 'src/ventas/dto/venta.dto';
 import { VentasService } from 'src/ventas/ventas.service';
 
-
+@UseGuards(JwtAuthGuard)
 @Controller('v1/ventas')
 export class VentasController {
   constructor(private readonly ventasService: VentasService) {}

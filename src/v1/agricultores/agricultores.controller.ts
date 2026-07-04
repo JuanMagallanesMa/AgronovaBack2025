@@ -10,7 +10,9 @@ import {
   HttpCode,
   HttpStatus,
   Logger, // Importa Logger para un logging más limpio (opcional)
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { AgricultoresService } from 'src/agricultores/agricultores.service';
 import {
   CreateAgricultorDto,
@@ -18,6 +20,7 @@ import {
 } from 'src/agricultores/dto/create-agricultor.dto';
 
 // La URL base será '/v1/agricultores'
+@UseGuards(JwtAuthGuard)
 @Controller('v1/agricultores')
 export class AgricultoresController {
   // Opcional: Inicializa un Logger con el contexto del controlador

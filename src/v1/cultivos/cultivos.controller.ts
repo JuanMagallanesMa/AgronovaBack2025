@@ -9,11 +9,13 @@ import {
   Put,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CultivosService } from 'src/cultivos/cultivos.service';
 import { CreateCultivoDto, UpdateCultivoDto } from 'src/cultivos/dto/cultivo.dto';
 
-
+@UseGuards(JwtAuthGuard)
 @Controller('v1/cultivos')
 export class CultivosController {
   constructor(private readonly cultivosService: CultivosService) {}
