@@ -44,9 +44,10 @@ export interface AuthSuccessResponse {
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  private static readonly defaultRole = 'Usuario';
+  private static readonly defaultRole = 'Lider';
   private static readonly activeStatus = 'Activo';
   private static readonly resetPasswordTtlMs = 60 * 60 * 1000;
+  private static readonly functionalRoles = new Set(['Administrador', 'Lider']);
 
   constructor(
     private readonly configService: ConfigService,
@@ -67,6 +68,11 @@ export class AuthService {
     if (!contrasenaValida) {
       throw new UnauthorizedException('Credenciales invalidas');
     }
+
+    await this.ensureFunctionalActiveRole(
+      usuario.rol,
+      () => new UnauthorizedException('El usuario no tiene un rol valido para iniciar sesion.'),
+    );
 
     const accessToken = await this.signToken({
       sub: usuario.id,
@@ -101,6 +107,13 @@ export class AuthService {
     }
 
     const contrasenaHash = await bcrypt.hash(registerDto.contrasena, 10);
+    await this.ensureFunctionalActiveRole(
+      AuthService.defaultRole,
+      () =>
+        new InternalServerErrorException(
+          `El rol ${AuthService.defaultRole} no esta disponible para registrar usuarios.`,
+        ),
+    );
 
     await this.userService.create({
       nombre: registerDto.nombre.trim(),
@@ -195,6 +208,21 @@ export class AuthService {
 
   private hashToken(token: string): string {
     return createHash('sha256').update(token).digest('hex');
+  }
+
+  private async ensureFunctionalActiveRole(
+    rol: string,
+    createException: () => UnauthorizedException | InternalServerErrorException,
+  ): Promise<void> {
+    if (!AuthService.functionalRoles.has(rol)) {
+      throw createException();
+    }
+
+    const roleIsActive = await this.userService.hasActiveRole(rol);
+
+    if (!roleIsActive) {
+      throw createException();
+    }
   }
 
   private async sendResetPasswordEmail(usuario: IUser, token: string): Promise<void> {

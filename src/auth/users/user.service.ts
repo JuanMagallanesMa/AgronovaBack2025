@@ -93,7 +93,21 @@ export class UserService {
     });
   }
 
+  async hasActiveRole(nombre: string): Promise<boolean> {
+    const snapshot = await this.firestore.collection('rol').where('nombre', '==', nombre).get();
+
+    return snapshot.docs.some((doc) => this.isActiveRole(doc.data()?.estado));
+  }
+
   private mapDocument(doc: DocumentSnapshot): IUser {
     return { id: doc.id, ...doc.data() } as IUser;
+  }
+
+  private isActiveRole(estado: unknown): boolean {
+    if (typeof estado === 'boolean') {
+      return estado;
+    }
+
+    return typeof estado === 'string' && estado.trim().toLowerCase() === 'activo';
   }
 }
