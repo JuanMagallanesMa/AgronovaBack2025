@@ -1,6 +1,10 @@
 // src/common/base.service.ts
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CollectionReference, DocumentSnapshot, Firestore } from 'firebase-admin/firestore';
+import {
+  CollectionReference,
+  DocumentSnapshot,
+  Firestore,
+} from 'firebase-admin/firestore';
 import { FIRESTORE_PROVIDER } from 'src/firebase/firebase.module'; // Importamos nuestro proveedor
 import { AppStatus } from './app.constants';
 import { IBaseModel } from './base.interface';
@@ -26,7 +30,7 @@ export class BaseService<T extends IBaseModel> {
    * La clave es que Firestore guarda el ID por separado de los datos.
    * Esta función los une en un solo objeto.
    */
- 
+
   protected mapDocument(doc: DocumentSnapshot): T {
     // Retorna { id: 'abc...', ...datos }
     return { id: doc.id, ...doc.data() } as T;

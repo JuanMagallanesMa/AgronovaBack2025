@@ -35,7 +35,7 @@ export interface Tarea extends IBaseModel {
   idTipoTarea: string;
   idAgricultores: string[];
   // 7. Actualizar la interfaz para reflejar la nueva estructura
-  insumosAsignados: InsumoAsignadoDto[]; 
+  insumosAsignados: InsumoAsignadoDto[];
   descripcion: string;
   estado: string;
 }
@@ -119,7 +119,7 @@ export class UpdateTareaDto {
   // 12. En tu UpdateTareaDto, 'descripcion' no debería ser @IsNotEmpty()
   // Si es @IsNotEmpty(), te obligará a enviarla siempre.
   // Debe ser @IsOptional() como los demás.
-  @IsOptional() 
+  @IsOptional()
   @IsString()
   descripcion?: string; // Cambiado de @IsNotEmpty() a @IsOptional()
 

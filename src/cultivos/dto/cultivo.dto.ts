@@ -1,5 +1,10 @@
 // src/cultivos/dto/cultivo.dto.ts
-import { IsNotEmpty, IsString, IsOptional, IsDateString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsDateString,
+} from 'class-validator';
 import { IBaseModel } from 'src/common/base.interface';
 
 // Interfaz que mapea el modelo de Dart
@@ -42,7 +47,7 @@ export class UpdateCultivoDto {
   @IsOptional()
   @IsString()
   idUbicacion?: string;
-  
+
   @IsOptional()
   @IsString()
   estado?: string;

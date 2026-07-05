@@ -29,7 +29,9 @@ describe('UsuariosController', () => {
   it('lista usuarios publicos filtrando por q', async () => {
     userService.findAllPublic.mockResolvedValue([usuarioPublico]);
 
-    await expect(controller.findAll('admin')).resolves.toEqual([usuarioPublico]);
+    await expect(controller.findAll('admin')).resolves.toEqual([
+      usuarioPublico,
+    ]);
     expect(userService.findAllPublic).toHaveBeenCalledWith('admin');
   });
 
@@ -38,7 +40,13 @@ describe('UsuariosController', () => {
       controller.updateRole(
         'admin-1',
         { rol: 'Lider' },
-        { user: { sub: 'admin-1', correo: usuarioPublico.correo, rol: 'Administrador' } },
+        {
+          user: {
+            sub: 'admin-1',
+            correo: usuarioPublico.correo,
+            rol: 'Administrador',
+          },
+        },
       ),
     ).toThrow(ForbiddenException);
   });
@@ -48,7 +56,13 @@ describe('UsuariosController', () => {
       controller.updateStatus(
         'admin-1',
         { estado: 'Inactivo' },
-        { user: { sub: 'admin-1', correo: usuarioPublico.correo, rol: 'Administrador' } },
+        {
+          user: {
+            sub: 'admin-1',
+            correo: usuarioPublico.correo,
+            rol: 'Administrador',
+          },
+        },
       ),
     ).toThrow(ForbiddenException);
   });

@@ -1,13 +1,20 @@
-jest.mock('src/firebase/firebase.module', () => ({
-  FIRESTORE_PROVIDER: 'FIRESTORE_PROVIDER',
-}), { virtual: true });
+jest.mock(
+  'src/firebase/firebase.module',
+  () => ({
+    FIRESTORE_PROVIDER: 'FIRESTORE_PROVIDER',
+  }),
+  { virtual: true },
+);
 
 jest.mock('bcrypt', () => ({
   compare: jest.fn(),
   hash: jest.fn(),
 }));
 
-import { InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -53,7 +60,7 @@ describe('AuthService', () => {
       signAsync: jest.fn().mockResolvedValue('jwt-token'),
     } as unknown as JwtService;
 
-    bcryptMock = bcrypt as jest.Mocked<typeof bcrypt>;
+    bcryptMock = bcrypt;
     bcryptMock.compare.mockReset();
     bcryptMock.hash.mockReset();
 

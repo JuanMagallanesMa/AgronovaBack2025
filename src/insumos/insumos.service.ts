@@ -17,13 +17,22 @@ export class InsumosService extends BaseService<Insumo> {
   }
 
   override async create(createDto: CreateInsumoDto): Promise<Insumo> {
-    await this.catalogosService.validarReferencia(createDto.idTipoInsumo, 'tipo-insumo');
+    await this.catalogosService.validarReferencia(
+      createDto.idTipoInsumo,
+      'tipo-insumo',
+    );
     return super.create(createDto);
   }
 
-  override async update(id: string, updateDto: UpdateInsumoDto): Promise<Insumo> {
+  override async update(
+    id: string,
+    updateDto: UpdateInsumoDto,
+  ): Promise<Insumo> {
     if (updateDto.idTipoInsumo) {
-      await this.catalogosService.validarReferencia(updateDto.idTipoInsumo, 'tipo-insumo');
+      await this.catalogosService.validarReferencia(
+        updateDto.idTipoInsumo,
+        'tipo-insumo',
+      );
     }
 
     return super.update(id, updateDto);

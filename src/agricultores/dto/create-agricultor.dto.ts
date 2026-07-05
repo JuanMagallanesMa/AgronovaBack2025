@@ -1,5 +1,11 @@
 // src/agricultores/dto/create-agricultor.dto.ts
-import { IsNotEmpty, IsString, IsOptional, IsNumber, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsNumber,
+  Min,
+} from 'class-validator';
 import { IBaseModel } from 'src/common/base.interface';
 
 // 1. Esta es la interfaz que usará nuestro servicio

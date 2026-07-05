@@ -38,7 +38,9 @@ export class UsuariosController {
     @Req() request: { user?: AuthJwtPayload },
   ): Promise<PublicUser> {
     if (request.user?.sub === id && updateUsuarioRolDto.rol === 'Lider') {
-      throw new ForbiddenException('No puedes cambiar tu propio rol de Administrador a Lider.');
+      throw new ForbiddenException(
+        'No puedes cambiar tu propio rol de Administrador a Lider.',
+      );
     }
 
     return this.userService.updateRole(id, updateUsuarioRolDto.rol);
@@ -50,7 +52,10 @@ export class UsuariosController {
     @Body() updateUsuarioEstadoDto: UpdateUsuarioEstadoDto,
     @Req() request: { user?: AuthJwtPayload },
   ): Promise<PublicUser> {
-    if (request.user?.sub === id && updateUsuarioEstadoDto.estado === 'Inactivo') {
+    if (
+      request.user?.sub === id &&
+      updateUsuarioEstadoDto.estado === 'Inactivo'
+    ) {
       throw new ForbiddenException('No puedes desactivar tu propio usuario.');
     }
 

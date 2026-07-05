@@ -16,11 +16,20 @@ export class CatalogoTipoBaseService {
     return this.catalogosService.obtenerPorTipo(this.tipo);
   }
 
-  create(createDto: { nombre: string; estado?: boolean }): Promise<CatalogoReferencia> {
-    return this.catalogosService.crearCatalogo({ ...createDto, tipo: this.tipo });
+  create(createDto: {
+    nombre: string;
+    estado?: boolean;
+  }): Promise<CatalogoReferencia> {
+    return this.catalogosService.crearCatalogo({
+      ...createDto,
+      tipo: this.tipo,
+    });
   }
 
-  update(id: string, updateDto: { nombre?: string; estado?: boolean }): Promise<CatalogoReferencia> {
+  update(
+    id: string,
+    updateDto: { nombre?: string; estado?: boolean },
+  ): Promise<CatalogoReferencia> {
     return this.catalogosService.actualizarCatalogo(id, updateDto);
   }
 

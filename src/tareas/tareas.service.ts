@@ -17,13 +17,19 @@ export class TareasService extends BaseService<Tarea> {
   }
 
   override async create(createDto: CreateTareaDto): Promise<Tarea> {
-    await this.catalogosService.validarReferencia(createDto.idTipoTarea, 'tipo-tarea');
+    await this.catalogosService.validarReferencia(
+      createDto.idTipoTarea,
+      'tipo-tarea',
+    );
     return super.create(createDto);
   }
 
   override async update(id: string, updateDto: UpdateTareaDto): Promise<Tarea> {
     if (updateDto.idTipoTarea) {
-      await this.catalogosService.validarReferencia(updateDto.idTipoTarea, 'tipo-tarea');
+      await this.catalogosService.validarReferencia(
+        updateDto.idTipoTarea,
+        'tipo-tarea',
+      );
     }
 
     return super.update(id, updateDto);

@@ -57,13 +57,17 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<LoginResponse> {
     const correoNormalizado = loginDto.correo.trim().toLowerCase();
-    const usuario = await this.userService.findByCorreoNormalizado(correoNormalizado);
+    const usuario =
+      await this.userService.findByCorreoNormalizado(correoNormalizado);
 
     if (!usuario || usuario.estado !== 'Activo') {
       throw new UnauthorizedException('Credenciales invalidas');
     }
 
-    const contrasenaValida = await bcrypt.compare(loginDto.contrasena, usuario.contrasenaHash);
+    const contrasenaValida = await bcrypt.compare(
+      loginDto.contrasena,
+      usuario.contrasenaHash,
+    );
 
     if (!contrasenaValida) {
       throw new UnauthorizedException('Credenciales invalidas');
@@ -71,7 +75,10 @@ export class AuthService {
 
     await this.ensureFunctionalActiveRole(
       usuario.rol,
-      () => new UnauthorizedException('El usuario no tiene un rol valido para iniciar sesion.'),
+      () =>
+        new UnauthorizedException(
+          'El usuario no tiene un rol valido para iniciar sesion.',
+        ),
     );
 
     const accessToken = await this.signToken({
@@ -100,10 +107,13 @@ export class AuthService {
 
   async register(registerDto: RegisterDto): Promise<AuthSuccessResponse> {
     const correoNormalizado = registerDto.correo.trim().toLowerCase();
-    const usuarioExistente = await this.userService.findByCorreoNormalizado(correoNormalizado);
+    const usuarioExistente =
+      await this.userService.findByCorreoNormalizado(correoNormalizado);
 
     if (usuarioExistente) {
-      throw new ConflictException('Ya existe una cuenta registrada con ese correo.');
+      throw new ConflictException(
+        'Ya existe una cuenta registrada con ese correo.',
+      );
     }
 
     const contrasenaHash = await bcrypt.hash(registerDto.contrasena, 10);
@@ -129,9 +139,12 @@ export class AuthService {
     };
   }
 
-  async forgotPassword(forgotPasswordDto: ForgotPasswordDto): Promise<AuthSuccessResponse> {
+  async forgotPassword(
+    forgotPasswordDto: ForgotPasswordDto,
+  ): Promise<AuthSuccessResponse> {
     const correoNormalizado = forgotPasswordDto.correo.trim().toLowerCase();
-    const usuario = await this.userService.findByCorreoNormalizado(correoNormalizado);
+    const usuario =
+      await this.userService.findByCorreoNormalizado(correoNormalizado);
 
     if (!usuario || usuario.estado !== AuthService.activeStatus) {
       return {
@@ -160,7 +173,9 @@ export class AuthService {
     };
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<AuthSuccessResponse> {
+  async resetPassword(
+    resetPasswordDto: ResetPasswordDto,
+  ): Promise<AuthSuccessResponse> {
     const token = resetPasswordDto.token.trim();
 
     if (!token) {
@@ -168,7 +183,8 @@ export class AuthService {
     }
 
     const tokenHash = this.hashToken(token);
-    const usuario = await this.userService.findByResetPasswordTokenHash(tokenHash);
+    const usuario =
+      await this.userService.findByResetPasswordTokenHash(tokenHash);
 
     if (!usuario?.resetPasswordExpiresAt) {
       throw new BadRequestException('El enlace de recuperacion no es valido.');
@@ -179,16 +195,21 @@ export class AuthService {
     }
 
     const contrasenaHash = await bcrypt.hash(resetPasswordDto.contrasena, 10);
-    await this.userService.updatePasswordAndClearResetToken(usuario.id, contrasenaHash);
+    await this.userService.updatePasswordAndClearResetToken(
+      usuario.id,
+      contrasenaHash,
+    );
 
     return {
-      message: 'Contrasena actualizada correctamente. Ya puedes iniciar sesion.',
+      message:
+        'Contrasena actualizada correctamente. Ya puedes iniciar sesion.',
     };
   }
 
   signToken(payload: AuthJwtPayload): Promise<string> {
     const secret = this.configService.get<string>('JWT_SECRET') ?? 'change-me';
-    const expiresIn = (this.configService.get<string>('JWT_EXPIRES_IN') ?? '8h') as StringValue;
+    const expiresIn = (this.configService.get<string>('JWT_EXPIRES_IN') ??
+      '8h') as StringValue;
 
     return this.jwtService.signAsync(payload, {
       secret,
@@ -225,7 +246,10 @@ export class AuthService {
     }
   }
 
-  private async sendResetPasswordEmail(usuario: IUser, token: string): Promise<void> {
+  private async sendResetPasswordEmail(
+    usuario: IUser,
+    token: string,
+  ): Promise<void> {
     const resendApiKey = this.configService.get<string>('RESEND_API_KEY');
     const resendFromEmail = this.configService.get<string>('RESEND_FROM_EMAIL');
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
@@ -261,8 +285,12 @@ export class AuthService {
 
     if (!response.ok) {
       const errorBody = await response.text();
-      this.logger.error(`Resend devolvio ${response.status} al enviar recuperacion: ${errorBody}`);
-      throw new InternalServerErrorException('No se pudo enviar el correo de recuperacion.');
+      this.logger.error(
+        `Resend devolvio ${response.status} al enviar recuperacion: ${errorBody}`,
+      );
+      throw new InternalServerErrorException(
+        'No se pudo enviar el correo de recuperacion.',
+      );
     }
   }
 }

@@ -14,7 +14,10 @@ import {
 import { AdminRoleGuard } from 'src/auth/guards/admin-role.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
-import { CreateCatalogoDto, UpdateCatalogoDto } from 'src/catalogos/dto/catalogo.dto';
+import {
+  CreateCatalogoDto,
+  UpdateCatalogoDto,
+} from 'src/catalogos/dto/catalogo.dto';
 import { CategoriasCultivoService } from 'src/catalogos/services/categorias-cultivo/categorias-cultivo.service';
 import { TiposInsumoService } from 'src/catalogos/services/tipos-insumo/tipos-insumo.service';
 import { TiposTareaService } from 'src/catalogos/services/tipos-tarea/tipos-tarea.service';
@@ -42,7 +45,10 @@ export class CatalogosController {
   }
 
   @Put('categorias-cultivo/:id')
-  updateCategoria(@Param('id') id: string, @Body() updateDto: UpdateCatalogoDto) {
+  updateCategoria(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateCatalogoDto,
+  ) {
     return this.categoriasCultivoService.update(id, updateDto);
   }
 
@@ -64,7 +70,10 @@ export class CatalogosController {
   }
 
   @Put('ubicaciones/:id')
-  updateUbicacion(@Param('id') id: string, @Body() updateDto: UpdateCatalogoDto) {
+  updateUbicacion(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateCatalogoDto,
+  ) {
     return this.ubicacionesService.update(id, updateDto);
   }
 
@@ -86,7 +95,10 @@ export class CatalogosController {
   }
 
   @Put('tipos-insumo/:id')
-  updateTipoInsumo(@Param('id') id: string, @Body() updateDto: UpdateCatalogoDto) {
+  updateTipoInsumo(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateCatalogoDto,
+  ) {
     return this.tiposInsumoService.update(id, updateDto);
   }
 
@@ -108,7 +120,10 @@ export class CatalogosController {
   }
 
   @Put('tipos-tarea/:id')
-  updateTipoTarea(@Param('id') id: string, @Body() updateDto: UpdateCatalogoDto) {
+  updateTipoTarea(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateCatalogoDto,
+  ) {
     return this.tiposTareaService.update(id, updateDto);
   }
 
