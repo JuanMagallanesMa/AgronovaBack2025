@@ -9,5 +9,6 @@ import { InsumosService } from './insumos.service';
   imports: [FirebaseModule, CatalogosModule],
   controllers: [InsumosController],
   providers: [InsumosService],
+  exports: [InsumosService],
 })
 export class InsumosModule {}
