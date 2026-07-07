@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { CatalogosModule } from './catalogos/catalogos.module';
+import { validateEnvironment } from './config/environment';
 import { CultivosModule } from './cultivos/cultivos.module';
 import { FirebaseModule } from './firebase/firebase.module';
 import { InsumosModule } from './insumos/insumos.module';
@@ -16,6 +17,7 @@ import { UsuariosModule } from './usuarios/usuarios.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validate: validateEnvironment,
     }),
     AuthModule,
     FirebaseModule,

@@ -207,7 +207,7 @@ export class AuthService {
   }
 
   signToken(payload: AuthJwtPayload): Promise<string> {
-    const secret = this.configService.get<string>('JWT_SECRET') ?? 'change-me';
+    const secret = this.configService.getOrThrow<string>('JWT_SECRET');
     const expiresIn = (this.configService.get<string>('JWT_EXPIRES_IN') ??
       '8h') as StringValue;
 
@@ -294,3 +294,4 @@ export class AuthService {
     }
   }
 }
+

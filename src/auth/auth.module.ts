@@ -4,9 +4,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { StringValue } from 'ms';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UserService } from './users/user.service';
+import { AuthRateLimitGuard } from './guards/auth-rate-limit.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { UserService } from './users/user.service';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') ?? 'change-me',
+        secret: configService.getOrThrow<string>('JWT_SECRET'),
         signOptions: {
           expiresIn: (configService.get<string>('JWT_EXPIRES_IN') ??
             '8h') as StringValue,
@@ -24,7 +25,13 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, JwtStrategy, JwtAuthGuard],
+  providers: [
+    AuthService,
+    UserService,
+    JwtStrategy,
+    JwtAuthGuard,
+    AuthRateLimitGuard,
+  ],
   exports: [AuthService, JwtAuthGuard, JwtModule],
 })
 export class AuthModule {}

@@ -9,7 +9,7 @@ import {
   Put,
   HttpCode,
   HttpStatus,
-  Logger, // Importa Logger para un logging más limpio (opcional)
+  Logger,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -19,42 +19,29 @@ import {
   UpdateAgricultorDto,
 } from 'src/agricultores/dto/create-agricultor.dto';
 
-// La URL base será '/v1/agricultores'
 @UseGuards(JwtAuthGuard)
 @Controller('v1/agricultores')
 export class AgricultoresController {
-  // Opcional: Inicializa un Logger con el contexto del controlador
   private readonly logger = new Logger(AgricultoresController.name);
 
   constructor(private readonly agricultoresService: AgricultoresService) {}
 
   @Post()
-  @HttpCode(HttpStatus.CREATED) // Devuelve 201 Created
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createAgricultorDto: CreateAgricultorDto) {
-    // --- AÑADIDO ---
-    this.logger.log('--- [BACK-END] Recibiendo POST /v1/agricultores ---');
-    console.log('BODY Recibido:', createAgricultorDto);
-    // ---------------
-
+    this.logger.log('Recibiendo POST /v1/agricultores');
     return this.agricultoresService.create(createAgricultorDto);
   }
 
   @Get()
   findAll() {
-    // --- AÑADIDO ---
-    this.logger.log('--- [BACK-END] Recibiendo GET /v1/agricultores ---');
-    // ---------------
-
+    this.logger.log('Recibiendo GET /v1/agricultores');
     return this.agricultoresService.findAllActive();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    // --- AÑADIDO ---
-    this.logger.log(`--- [BACK-END] Recibiendo GET /v1/agricultores/${id} ---`);
-    console.log('PARAM (id) Recibido:', id);
-    // ---------------
-
+    this.logger.log('Recibiendo GET /v1/agricultores/:id');
     return this.agricultoresService.findOne(id);
   }
 
@@ -63,26 +50,14 @@ export class AgricultoresController {
     @Param('id') id: string,
     @Body() updateAgricultorDto: UpdateAgricultorDto,
   ) {
-    // --- AÑADIDO ---
-    this.logger.log(`--- [BACK-END] Recibiendo PUT /v1/agricultores/${id} ---`);
-    console.log('PARAM (id) Recibido:', id);
-    console.log('BODY Recibido:', updateAgricultorDto);
-    // ---------------
-
+    this.logger.log('Recibiendo PUT /v1/agricultores/:id');
     return this.agricultoresService.update(id, updateAgricultorDto);
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT) // Devuelve 204 No Content
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
-    // --- AÑADIDO ---
-    this.logger.log(
-      `--- [BACK-END] Recibiendo DELETE /v1/agricultores/${id} ---`,
-    );
-    console.log('PARAM (id) Recibido:', id);
-    // ---------------
-
-    // El servicio base maneja el borrado lógico (pone estado: 'Inactivo')
+    this.logger.log('Recibiendo DELETE /v1/agricultores/:id');
     return this.agricultoresService.deleteLogically(id);
   }
 }
