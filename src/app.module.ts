@@ -1,28 +1,32 @@
 // src/app.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { AgricultoresModule } from './agricultores/agricultores.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { FirebaseModule } from './firebase/firebase.module';
-import { AgricultoresModule } from './agricultores/agricultores.module';
 import { CatalogosModule } from './catalogos/catalogos.module';
+import { validateEnvironment } from './config/environment';
 import { CultivosModule } from './cultivos/cultivos.module';
+import { FirebaseModule } from './firebase/firebase.module';
 import { InsumosModule } from './insumos/insumos.module';
 import { TareasModule } from './tareas/tareas.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validate: validateEnvironment,
     }),
     AuthModule,
     FirebaseModule,
-    // --- Tus Modulos de API ---
     AgricultoresModule,
     CatalogosModule,
     CultivosModule,
     InsumosModule,
     TareasModule,
+    UsuariosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

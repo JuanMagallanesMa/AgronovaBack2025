@@ -4,7 +4,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CollectionReference, DocumentSnapshot, Firestore } from 'firebase-admin/firestore';
+import {
+  CollectionReference,
+  DocumentSnapshot,
+  Firestore,
+} from 'firebase-admin/firestore';
 
 import { FIRESTORE_PROVIDER } from 'src/firebase/firebase.module';
 
@@ -15,7 +19,7 @@ export const CATALOGO_TIPOS = [
   'ubicacion',
 ] as const;
 
-export type CatalogoTipo = typeof CATALOGO_TIPOS[number];
+export type CatalogoTipo = (typeof CATALOGO_TIPOS)[number];
 
 type CreateCatalogoData = {
   nombre: string;
@@ -69,7 +73,10 @@ export class CatalogosService {
     return this.findOne(docRef.id);
   }
 
-  async actualizarCatalogo(id: string, data: UpdateCatalogoData): Promise<CatalogoDocumento> {
+  async actualizarCatalogo(
+    id: string,
+    data: UpdateCatalogoData,
+  ): Promise<CatalogoDocumento> {
     this.validarEstado(data.estado);
     await this.findOne(id);
     await this.collection.doc(id).update(data);

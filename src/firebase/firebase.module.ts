@@ -26,7 +26,7 @@ export const FIRESTORE_PROVIDER = 'FIRESTORE_PROVIDER';
 
         // Configuración de la credencial
         // (la ruta es relativa desde /dist en producción)
-        const serviceAccount = require(`../../${serviceAccountPath}`); 
+        const serviceAccount = require(`../../${serviceAccountPath}`);
 
         // Inicializa la app de Firebase
         return admin.initializeApp({

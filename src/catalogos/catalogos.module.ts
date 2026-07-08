@@ -1,6 +1,7 @@
 // src/catalogos/catalogos.module.ts
 import { Module } from '@nestjs/common';
 
+import { AdminRoleGuard } from 'src/auth/guards/admin-role.guard';
 import { FirebaseModule } from 'src/firebase/firebase.module';
 import { CatalogosController } from 'src/v1/catalogos/catalogos.controller';
 import { CatalogosService } from './catalogos.service';
@@ -13,6 +14,7 @@ import { UbicacionesService } from './services/ubicaciones/ubicaciones.service';
   imports: [FirebaseModule],
   controllers: [CatalogosController],
   providers: [
+    AdminRoleGuard,
     CatalogosService,
     CategoriasCultivoService,
     UbicacionesService,
