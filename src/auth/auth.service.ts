@@ -206,6 +206,29 @@ export class AuthService {
     };
   }
 
+  async getCurrentUser(
+    payload: AuthJwtPayload,
+  ): Promise<LoginResponse['user']> {
+    const user = await this.userService.findPublicById(payload.sub);
+
+    if (user.estado !== AuthService.activeStatus) {
+      throw new UnauthorizedException('Sesion invalida.');
+    }
+
+    await this.ensureFunctionalActiveRole(
+      user.rol,
+      () => new UnauthorizedException('Sesion invalida.'),
+    );
+
+    return {
+      id: user.id,
+      nombre: user.nombre,
+      correo: user.correo,
+      rol: user.rol,
+      estado: user.estado,
+    };
+  }
+
   signToken(payload: AuthJwtPayload): Promise<string> {
     const secret = this.configService.getOrThrow<string>('JWT_SECRET');
     const expiresIn = (this.configService.get<string>('JWT_EXPIRES_IN') ??
@@ -294,4 +317,3 @@ export class AuthService {
     }
   }
 }
-

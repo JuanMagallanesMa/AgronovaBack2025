@@ -46,6 +46,7 @@ describe('AuthService', () => {
       create: jest.fn(),
       findByCorreoNormalizado: jest.fn(),
       findByResetPasswordTokenHash: jest.fn(),
+      findPublicById: jest.fn(),
       hasActiveRole: jest.fn(),
       setResetPasswordToken: jest.fn(),
       updatePasswordAndClearResetToken: jest.fn(),
@@ -75,6 +76,33 @@ describe('AuthService', () => {
     await expect(
       authService.login({ correo: usuarioBase.correo, contrasena: 'secreta' }),
     ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('devuelve el usuario vigente para una sesion valida', async () => {
+    userService.findPublicById.mockResolvedValue({
+      id: usuarioBase.id,
+      nombre: usuarioBase.nombre,
+      correo: usuarioBase.correo,
+      rol: usuarioBase.rol,
+      estado: usuarioBase.estado,
+      ultimoAcceso: null,
+    });
+    userService.hasActiveRole.mockResolvedValue(true);
+
+    await expect(
+      authService.getCurrentUser({
+        sub: usuarioBase.id,
+        correo: usuarioBase.correo,
+        rol: usuarioBase.rol,
+        estado: usuarioBase.estado,
+      }),
+    ).resolves.toEqual({
+      id: usuarioBase.id,
+      nombre: usuarioBase.nombre,
+      correo: usuarioBase.correo,
+      rol: usuarioBase.rol,
+      estado: usuarioBase.estado,
+    });
   });
 
   it('registra nuevos usuarios con el rol Lider', async () => {
