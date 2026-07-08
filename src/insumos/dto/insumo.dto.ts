@@ -1,12 +1,18 @@
 // src/insumos/dto/insumo.dto.ts
-import { IsNotEmpty, IsString, IsOptional, IsNumber, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsNumber,
+  Min,
+} from 'class-validator';
 import { IBaseModel } from 'src/common/base.interface';
 
 export interface Insumo extends IBaseModel {
   idTipoInsumo: string;
   descripcion: string;
   cantidad: number;
-  unidadMedida: string
+  unidadMedida: string;
   estado: string;
 }
 
@@ -30,7 +36,7 @@ export class CreateInsumoDto {
 
   @IsOptional()
   @IsString()
-  estado?: string; 
+  estado?: string;
 }
 
 export class UpdateInsumoDto {
@@ -53,6 +59,5 @@ export class UpdateInsumoDto {
 
   @IsOptional()
   @IsString()
-  estado?: string; 
-
+  estado?: string;
 }

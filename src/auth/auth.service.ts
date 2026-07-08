@@ -44,9 +44,10 @@ export interface AuthSuccessResponse {
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  private static readonly defaultRole = 'Usuario';
+  private static readonly defaultRole = 'Lider';
   private static readonly activeStatus = 'Activo';
   private static readonly resetPasswordTtlMs = 60 * 60 * 1000;
+  private static readonly functionalRoles = new Set(['Administrador', 'Lider']);
 
   constructor(
     private readonly configService: ConfigService,
@@ -56,17 +57,29 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<LoginResponse> {
     const correoNormalizado = loginDto.correo.trim().toLowerCase();
-    const usuario = await this.userService.findByCorreoNormalizado(correoNormalizado);
+    const usuario =
+      await this.userService.findByCorreoNormalizado(correoNormalizado);
 
     if (!usuario || usuario.estado !== 'Activo') {
       throw new UnauthorizedException('Credenciales invalidas');
     }
 
-    const contrasenaValida = await bcrypt.compare(loginDto.contrasena, usuario.contrasenaHash);
+    const contrasenaValida = await bcrypt.compare(
+      loginDto.contrasena,
+      usuario.contrasenaHash,
+    );
 
     if (!contrasenaValida) {
       throw new UnauthorizedException('Credenciales invalidas');
     }
+
+    await this.ensureFunctionalActiveRole(
+      usuario.rol,
+      () =>
+        new UnauthorizedException(
+          'El usuario no tiene un rol valido para iniciar sesion.',
+        ),
+    );
 
     const accessToken = await this.signToken({
       sub: usuario.id,
@@ -94,13 +107,23 @@ export class AuthService {
 
   async register(registerDto: RegisterDto): Promise<AuthSuccessResponse> {
     const correoNormalizado = registerDto.correo.trim().toLowerCase();
-    const usuarioExistente = await this.userService.findByCorreoNormalizado(correoNormalizado);
+    const usuarioExistente =
+      await this.userService.findByCorreoNormalizado(correoNormalizado);
 
     if (usuarioExistente) {
-      throw new ConflictException('Ya existe una cuenta registrada con ese correo.');
+      throw new ConflictException(
+        'Ya existe una cuenta registrada con ese correo.',
+      );
     }
 
     const contrasenaHash = await bcrypt.hash(registerDto.contrasena, 10);
+    await this.ensureFunctionalActiveRole(
+      AuthService.defaultRole,
+      () =>
+        new InternalServerErrorException(
+          `El rol ${AuthService.defaultRole} no esta disponible para registrar usuarios.`,
+        ),
+    );
 
     await this.userService.create({
       nombre: registerDto.nombre.trim(),
@@ -116,9 +139,12 @@ export class AuthService {
     };
   }
 
-  async forgotPassword(forgotPasswordDto: ForgotPasswordDto): Promise<AuthSuccessResponse> {
+  async forgotPassword(
+    forgotPasswordDto: ForgotPasswordDto,
+  ): Promise<AuthSuccessResponse> {
     const correoNormalizado = forgotPasswordDto.correo.trim().toLowerCase();
-    const usuario = await this.userService.findByCorreoNormalizado(correoNormalizado);
+    const usuario =
+      await this.userService.findByCorreoNormalizado(correoNormalizado);
 
     if (!usuario || usuario.estado !== AuthService.activeStatus) {
       return {
@@ -147,7 +173,9 @@ export class AuthService {
     };
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<AuthSuccessResponse> {
+  async resetPassword(
+    resetPasswordDto: ResetPasswordDto,
+  ): Promise<AuthSuccessResponse> {
     const token = resetPasswordDto.token.trim();
 
     if (!token) {
@@ -155,7 +183,8 @@ export class AuthService {
     }
 
     const tokenHash = this.hashToken(token);
-    const usuario = await this.userService.findByResetPasswordTokenHash(tokenHash);
+    const usuario =
+      await this.userService.findByResetPasswordTokenHash(tokenHash);
 
     if (!usuario?.resetPasswordExpiresAt) {
       throw new BadRequestException('El enlace de recuperacion no es valido.');
@@ -166,16 +195,44 @@ export class AuthService {
     }
 
     const contrasenaHash = await bcrypt.hash(resetPasswordDto.contrasena, 10);
-    await this.userService.updatePasswordAndClearResetToken(usuario.id, contrasenaHash);
+    await this.userService.updatePasswordAndClearResetToken(
+      usuario.id,
+      contrasenaHash,
+    );
 
     return {
-      message: 'Contrasena actualizada correctamente. Ya puedes iniciar sesion.',
+      message:
+        'Contrasena actualizada correctamente. Ya puedes iniciar sesion.',
+    };
+  }
+
+  async getCurrentUser(
+    payload: AuthJwtPayload,
+  ): Promise<LoginResponse['user']> {
+    const user = await this.userService.findPublicById(payload.sub);
+
+    if (user.estado !== AuthService.activeStatus) {
+      throw new UnauthorizedException('Sesion invalida.');
+    }
+
+    await this.ensureFunctionalActiveRole(
+      user.rol,
+      () => new UnauthorizedException('Sesion invalida.'),
+    );
+
+    return {
+      id: user.id,
+      nombre: user.nombre,
+      correo: user.correo,
+      rol: user.rol,
+      estado: user.estado,
     };
   }
 
   signToken(payload: AuthJwtPayload): Promise<string> {
-    const secret = this.configService.get<string>('JWT_SECRET') ?? 'change-me';
-    const expiresIn = (this.configService.get<string>('JWT_EXPIRES_IN') ?? '8h') as StringValue;
+    const secret = this.configService.getOrThrow<string>('JWT_SECRET');
+    const expiresIn = (this.configService.get<string>('JWT_EXPIRES_IN') ??
+      '8h') as StringValue;
 
     return this.jwtService.signAsync(payload, {
       secret,
@@ -197,7 +254,25 @@ export class AuthService {
     return createHash('sha256').update(token).digest('hex');
   }
 
-  private async sendResetPasswordEmail(usuario: IUser, token: string): Promise<void> {
+  private async ensureFunctionalActiveRole(
+    rol: string,
+    createException: () => UnauthorizedException | InternalServerErrorException,
+  ): Promise<void> {
+    if (!AuthService.functionalRoles.has(rol)) {
+      throw createException();
+    }
+
+    const roleIsActive = await this.userService.hasActiveRole(rol);
+
+    if (!roleIsActive) {
+      throw createException();
+    }
+  }
+
+  private async sendResetPasswordEmail(
+    usuario: IUser,
+    token: string,
+  ): Promise<void> {
     const resendApiKey = this.configService.get<string>('RESEND_API_KEY');
     const resendFromEmail = this.configService.get<string>('RESEND_FROM_EMAIL');
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
@@ -233,8 +308,12 @@ export class AuthService {
 
     if (!response.ok) {
       const errorBody = await response.text();
-      this.logger.error(`Resend devolvio ${response.status} al enviar recuperacion: ${errorBody}`);
-      throw new InternalServerErrorException('No se pudo enviar el correo de recuperacion.');
+      this.logger.error(
+        `Resend devolvio ${response.status} al enviar recuperacion: ${errorBody}`,
+      );
+      throw new InternalServerErrorException(
+        'No se pudo enviar el correo de recuperacion.',
+      );
     }
   }
 }

@@ -9,5 +9,6 @@ import { CultivosService } from './cultivos.service';
   imports: [FirebaseModule, CatalogosModule],
   controllers: [CultivosController],
   providers: [CultivosService],
+  exports: [CultivosService],
 })
 export class CultivosModule {}

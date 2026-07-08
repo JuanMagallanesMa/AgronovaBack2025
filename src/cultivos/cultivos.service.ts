@@ -21,20 +21,35 @@ export class CultivosService extends BaseService<Cultivo> {
     return super.create(createDto);
   }
 
-  override async update(id: string, updateDto: UpdateCultivoDto): Promise<Cultivo> {
+  override async update(
+    id: string,
+    updateDto: UpdateCultivoDto,
+  ): Promise<Cultivo> {
     if (updateDto.idCategoria) {
-      await this.catalogosService.validarReferencia(updateDto.idCategoria, 'categoria-cultivo');
+      await this.catalogosService.validarReferencia(
+        updateDto.idCategoria,
+        'categoria-cultivo',
+      );
     }
 
     if (updateDto.idUbicacion) {
-      await this.catalogosService.validarReferencia(updateDto.idUbicacion, 'ubicacion');
+      await this.catalogosService.validarReferencia(
+        updateDto.idUbicacion,
+        'ubicacion',
+      );
     }
 
     return super.update(id, updateDto);
   }
 
-  private async validarReferencias(idCategoria: string, idUbicacion: string): Promise<void> {
-    await this.catalogosService.validarReferencia(idCategoria, 'categoria-cultivo');
+  private async validarReferencias(
+    idCategoria: string,
+    idUbicacion: string,
+  ): Promise<void> {
+    await this.catalogosService.validarReferencia(
+      idCategoria,
+      'categoria-cultivo',
+    );
     await this.catalogosService.validarReferencia(idUbicacion, 'ubicacion');
   }
 }

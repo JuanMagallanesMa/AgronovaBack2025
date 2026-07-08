@@ -1,25 +1,26 @@
-// src/main.ts
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common'; // <-- 1. Importa
+import { getCorsOrigins } from './config/environment';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const corsOrigins = getCorsOrigins(process.env);
 
   app.enableCors({
-    origin: true,
+    origin: corsOrigins,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Accept', 'Authorization'],
+    credentials: true,
   });
 
-  // <-- 2. Añade esta línea para habilitar la validación global
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // Ignora campos que no estén en el DTO
-      forbidNonWhitelisted: true, // Lanza error si hay campos no permitidos
+      whitelist: true,
+      forbidNonWhitelisted: true,
     }),
   );
 
   await app.listen(3000);
 }
-bootstrap();
+void bootstrap();
